@@ -11,6 +11,7 @@ width, height = 50, 50
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 v_x, v_y, w = -9, -9, 0
+g=0.5
 x, y = screen_width-width / 2, screen_height-height / 2
 # x, y = 0, 0
 # x, y = width / 2, height / 2
@@ -43,27 +44,41 @@ def move(x,y,angle):
     x += v_x
     y += v_y
 
-    v_y += 0.5
-    # v_x += 0.5
+    v_y += g
+    # v_x +=g
     angle += w  
 
     return clash(x,y,angle)
 
+def sign(x):
+    if x == 0:
+        return 0
+    if x < 0:
+        return -1
+    return 1
+
 def clash(x,y,angle):
     global v_x
     global v_y
+    delta = 0
 
     if x + width / 2 >= screen_width or x < width / 2:
         v_x = -v_x
 
     if y + height / 2 >= screen_height or y < height / 2:
-        if y > screen_height-height / 2: 
+        
+        if y > screen_height-height / 2:
+            delta = 2 * (y - screen_height + height / 2)
+            v_y = - sign(v_y) * math.sqrt(v_y ** 2 - sign(v_y) * 2 * delta * g)
             y = 2 * (screen_height-height/2) - y
 
         if y < height / 2:
+            delta = height - 2 * y
+            v_y = - sign(v_y) * math.sqrt(v_y ** 2 - sign(v_y) * 2 * delta * g)
             y = height - y
 
-        v_y = -v_y
+        
+
     
     return x,y,angle
 
@@ -73,3 +88,5 @@ for i in range(1000):
     draw(x,y,angle)
 
 pygame.quit()
+
+
